@@ -27,8 +27,8 @@ const Home = () => {
     if (!path) return 'https://via.placeholder.com/150';
     if (path.startsWith('http')) return path;
     const cleanPath = path.replace(/\\/g, '/');
-    // Prepend backendUrl to the path
-    return `${backendUrl}/${cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath}`;
+    const normalizedPath = cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath;
+    return `${backendUrl}/${normalizedPath}`;
   };
 
   useEffect(() => {
