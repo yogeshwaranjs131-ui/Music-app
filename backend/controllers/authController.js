@@ -6,19 +6,22 @@ const mongoose = require('mongoose'); // Import mongoose for ObjectId validation
 exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ message: 'User already exists' });
-
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    user = new User({ username, email, password: hashedPassword });
-    await user.save();
+    const user = new User({ username, email, password: hashedPassword });
+    const savedUser = await user.save();
 
-    const payload = { user: { id: user.id } };
+    const payload = { user: { id: savedUser.id } };
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '365d' }, (err, token) => {
       if (err) throw err;
-      res.json({ token, message: 'Registration Accepted' });
+      // 
+      const userResponse = {
+        _id: savedUser._id, username: savedUser.username, email: savedUser.email, role: savedUser.role, 
+        likedSongs: savedUser.likedSongs, photoGallery: savedUser.photoGallery, profileImage: savedUser.profileImage
+      };
+      res.status(201).json({ token, user: userResponse });
     });
   } catch (err) {
     console.error(err.message);
@@ -51,7 +54,12 @@ exports.login = async (req, res) => {
     const payload = { user: { id: user.id } };
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '365d' }, (err, token) => {
       if (err) throw err;
-      res.json({ token, message: 'Login Accepted' });
+      // டோக்கனுடன் பயனர் தகவலையும் அனுப்புகிறோம்
+      const userResponse = {
+        _id: user._id, username: user.username, email: user.email, role: user.role, 
+        likedSongs: user.likedSongs, photoGallery: user.photoGallery, profileImage: user.profileImage
+      };
+      res.json({ token, user: userResponse, message: 'Login Accepted' });
     });
   } catch (err) {
     console.error('Login error:', err.message);

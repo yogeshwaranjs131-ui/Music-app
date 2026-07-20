@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import api from '../api';
-import { FaCamera, FaPlus } from 'react-icons/fa';
+import { FaCamera, FaPlus, FaTrash } from 'react-icons/fa';
 
 const Profile = () => {
   const { user, setUser } = useAuth();
@@ -74,6 +74,27 @@ const Profile = () => {
     }
   };
 
+  const handleDeletePhoto = async (photoUrl) => {
+    if (!window.confirm("Are you sure you want to delete this photo?")) {
+      return;
+    }
+
+    setUploading(true); // Re-use uploading state for visual feedback
+    setError('');
+
+    try {
+      // The backend expects the URL of the photo to delete in the body
+      const response = await api.delete('/api/auth/delete-gallery', { data: { photoUrl } });
+      setUser(response.data); // Update user state with the returned user object
+      alert("Photo deleted successfully!");
+    } catch (err) {
+      console.error("Failed to delete photo:", err);
+      setError(err.response?.data?.message || 'Failed to delete photo.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (!user) {
     return <div className="text-center p-10">Loading profile...</div>;
   }
@@ -113,8 +134,13 @@ const Profile = () => {
         <h2 className="text-2xl font-bold mb-4">Photo Gallery</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {user.photoGallery && user.photoGallery.map((photo, index) => (
-            <div key={index} className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
+            <div key={index} className="relative group aspect-square bg-gray-800 rounded-lg overflow-hidden">
               <img src={getImageUrl(photo)} alt={`Gallery photo ${index + 1}`} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <button onClick={() => handleDeletePhoto(photo)} className="text-white p-3 rounded-full hover:bg-red-500/50 transition-colors" title="Delete Photo">
+                  <FaTrash size={20} />
+                </button>
+              </div>
             </div>
           ))}
           <label className="aspect-square bg-gray-800 border-2 border-dashed border-gray-600 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-700 hover:border-gray-400 transition-all">

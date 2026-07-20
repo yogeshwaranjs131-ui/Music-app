@@ -12,7 +12,7 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { setAuthData } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,11 +25,12 @@ const Register = () => {
     setError('');
 
     try {
-      await api.post('/api/auth/register', formData);
-      
-      // AuthContext-ல் உள்ள login பங்க்ஷனை நேரடியாகப் பயன்படுத்துகிறோம்
-      await login(formData.email, formData.password);
-      console.log("Registration Accepted!"); // Frontend confirmation
+      // பதிவு செய்வதற்கான API அழைப்பு. இது டோக்கன் மற்றும் பயனர் தகவலைத் தரும்.
+      const response = await api.post('/api/auth/register', formData);
+
+      // AuthContext-ஐ நேரடியாகப் புதுப்பிக்கிறோம். இரண்டாவது login அழைப்பு தேவையில்லை.
+      setAuthData(response.data.token, response.data.user); // response.data.user is now available
+      console.log("Registration and Login successful!");
       navigate('/');
     } catch (err) {
       console.error("Registration Error:", err);

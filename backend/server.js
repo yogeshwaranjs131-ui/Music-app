@@ -47,8 +47,6 @@ app.get('/', (req, res) => {
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/music-app')
   .then(() => {
     console.log('Connected to MongoDB');
-    // Server தொடங்கும் போது குறிப்பிட்ட User-ஐ உருவாக்குகிறது அல்லது புதுப்பிக்கிறது
-    seedMainUser();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
@@ -56,30 +54,5 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/music-app
   .catch(err => {
     console.error('Database connection error:', err);
   });
-
-async function seedMainUser() {
-  try {
-    const email = 'yogeshwaranjs131@gmail.com';
-    const rawPassword = 'Nathiya@123';
-    const username = 'Yogeshwaran';
-    
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(rawPassword, salt);
-      await User.findByIdAndUpdate(existingUser._id, 
-        { $set: { password: hashedPassword } },
-        { runValidators: false } // Skip password validation during update
-      );
-    } else {
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(rawPassword, salt);
-      await User.create({ username, email, password: hashedPassword });
-    }
-    console.log("Main user credentials are ready!");
-  } catch (err) {
-    console.error('Error seeding user:', err);
-  }
-}
 
 module.exports = app;
