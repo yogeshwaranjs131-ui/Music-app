@@ -12,11 +12,11 @@ const Profile = () => {
   const getImageUrl = (path) => {
     if (!path) return 'https://via.placeholder.com/150';
     if (path.startsWith('http')) return path;
-    // Path-ல் உள்ள \ குறியீடுகளை / ஆக மாற்றுகிறோம்
-    let cleanPath = path.replace(/\\/g, '/');
-    if (cleanPath.startsWith('/')) cleanPath = cleanPath.slice(1);
+    // 
+    const cleanPath = path.replace(/\\/g, '/');
+    const normalizedPath = cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath;
     
-    return `${backendUrl}/${cleanPath}`;
+    return `${backendUrl}/${normalizedPath}`;
   };
 
   const handleProfileImageUpload = async (e) => {
