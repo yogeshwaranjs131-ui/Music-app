@@ -32,7 +32,7 @@ const LikedSongs = () => {
       if (user) {
         try {
           // Fetch liked songs directly from the new, efficient endpoint
-          const response = await api.get('/api/playlists/favorites');
+          const response = await api.get('/playlists/favorites');
           setSongs(response.data);
         } catch (error) {
           console.error('Failed to fetch liked songs:', error);

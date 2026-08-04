@@ -33,7 +33,7 @@ const Profile = () => {
     try {
       // Axios handles the Content-Type boundary automatically for FormData. 
       // Don't set headers manually here.
-      const response = await api.post('/api/auth/upload-profile', formData, {
+      const response = await api.post('/auth/profile/upload', formData, {
         // அப்லோட் ப்ராக்ரஸ்ஸை அறிய (விருப்பமிருந்தால்)
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -63,7 +63,7 @@ const Profile = () => {
     setError('');
 
     try {
-      const response = await api.post('/api/auth/upload-gallery-photo', formData);
+      const response = await api.post('/auth/gallery/upload', formData);
       setUser(response.data);
       alert("Photo added to gallery!");
     } catch (err) {
@@ -84,7 +84,7 @@ const Profile = () => {
 
     try {
       // The backend expects the URL of the photo to delete in the body
-      const response = await api.delete('/api/auth/delete-gallery', { data: { photoUrl } });
+      const response = await api.delete('/auth/gallery/delete', { data: { photoUrl } });
       setUser(response.data); // Update user state with the returned user object
       alert("Photo deleted successfully!");
     } catch (err) {

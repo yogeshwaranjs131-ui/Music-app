@@ -1,28 +1,9 @@
 import axios from 'axios';
-import { API_URL } from './config';
 
 const api = axios.create({
-  baseURL: API_URL,
+  // Vite proxy handles redirecting this to the backend.
+  // In production, this would be your actual backend URL.
+  baseURL: '/api' 
 });
-
-// Add a request interceptor to attach the token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers['x-auth-token'] = token;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-export const uploadSong = (formData) => {
-  return api.post('/api/songs', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-};
 
 export default api;

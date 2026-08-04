@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
         // Token-ஐ API Headers-ல் சேர்க்கிறோம்
         api.defaults.headers.common['x-auth-token'] = token;
         try {
-          const res = await api.get('/api/auth/user');
+          const res = await api.get('/auth/user');
           setUser(res.data);
         } catch (err) {
           console.error("Auth check failed", err);
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await api.post('/api/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password });
       if (res.data.token) {
         localStorage.setItem('token', res.data.token);
         // Login ஆனவுடன் Token-ஐ Headers-ல் இணைக்கிறோம்

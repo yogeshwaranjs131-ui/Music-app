@@ -15,7 +15,7 @@ const CommentModal = ({ song, user, onClose }) => {
 
   const fetchComments = async () => {
     try {
-      const res = await api.get(`/api/comments/${song._id}`);
+      const res = await api.get(`/comments/${song._id}`);
       setComments(res.data);
     } catch (err) {
       console.error("Failed to fetch comments", err);
@@ -28,7 +28,7 @@ const CommentModal = ({ song, user, onClose }) => {
 
     setLoading(true);
     try {
-      const res = await api.post('/api/comments', {
+      const res = await api.post('/comments', {
         songId: song._id,
         text: newComment
       });
@@ -46,7 +46,7 @@ const CommentModal = ({ song, user, onClose }) => {
   const handleDelete = async (commentId) => {
     if (!window.confirm("Delete this comment?")) return;
     try {
-      await api.delete(`/api/comments/${commentId}`);
+      await api.delete(`/comments/${commentId}`);
       setComments(comments.filter(c => c._id !== commentId));
     } catch (err) {
       console.error("Failed to delete comment", err);

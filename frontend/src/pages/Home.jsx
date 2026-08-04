@@ -33,7 +33,7 @@ const Home = () => {
 
   useEffect(() => {
     // Fetch all songs, regardless of login status
-    api.get('/api/songs')
+    api.get('/songs')
       .then(response => {
         if (Array.isArray(response.data)) {
           setSongs(response.data);
@@ -57,7 +57,7 @@ const Home = () => {
 
     // If user is logged in (from AuthContext), fetch their playlists
     if (user) {
-      api.get('/api/playlists')
+      api.get('/playlists')
         .then(response => {
           setUserPlaylists(response.data);
         })
@@ -84,7 +84,7 @@ const Home = () => {
         return;
     }
     try {
-      const response = await api.put(`/api/auth/favorites/${song._id}`);
+      const response = await api.put(`/auth/favorites/${song._id}`);
       setUser(response.data);
     } catch (error) {
       console.error("Failed to like song", error);
@@ -105,7 +105,7 @@ const Home = () => {
 
   const addToPlaylist = async (playlistId) => {
     try {
-      await api.put(`/api/playlists/${playlistId}/songs`, { songId: songToAdd._id });
+      await api.put(`/playlists/${playlistId}/songs`, { songId: songToAdd._id });
       setShowPlaylistModal(false);
       alert("Song added to playlist!");
     } catch (error) {
@@ -118,7 +118,7 @@ const Home = () => {
     if (!window.confirm("Are you sure you want to delete this song?")) return;
 
     try {
-      await api.delete(`/api/songs/${songId}`);
+      await api.delete(`/songs/${songId}`);
       setSongs(songs.filter(song => song._id !== songId));
       alert("Song deleted successfully");
     } catch (error) {

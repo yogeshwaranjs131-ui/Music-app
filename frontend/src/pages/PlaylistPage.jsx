@@ -31,7 +31,7 @@ const PlaylistPage = () => {
     if (id) {
       const fetchPlaylist = async () => {
         try {
-          const response = await api.get(`/api/playlists/${id}`);
+          const response = await api.get(`/playlists/${id}`);
           setPlaylist(response.data);
         } catch (error) {
           console.error('Failed to fetch playlist:', error);

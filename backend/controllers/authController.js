@@ -6,6 +6,12 @@ const mongoose = require('mongoose'); // Import mongoose for ObjectId validation
 exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+
+    // Check if user already exists
+    let existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email or username already exists' });
+    }
     
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -14,16 +20,20 @@ exports.register = async (req, res) => {
     const savedUser = await user.save();
 
     const payload = { user: { id: savedUser.id } };
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '365d' }, (err, token) => {
-      if (err) throw err;
-      // 
-      const userResponse = {
-        _id: savedUser._id, username: savedUser.username, email: savedUser.email, role: savedUser.role, 
-        likedSongs: savedUser.likedSongs, photoGallery: savedUser.photoGallery, profileImage: savedUser.profileImage
-      };
-      res.status(201).json({ token, user: userResponse });
-    });
+    const token = await jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '365d' });
+
+    // Send back only the essential user information upon registration.
+    // The full user object can be fetched later.
+    const userResponse = {
+      _id: savedUser._id, username: savedUser.username, email: savedUser.email, role: savedUser.role
+    };
+
+    res.status(201).json({ token, user: userResponse });
   } catch (err) {
+    // Handle other potential errors, like validation errors
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: err.message });
+    }
     console.error(err.message);
     res.status(500).send('Server Error');
   }
@@ -36,7 +46,8 @@ exports.login = async (req, res) => {
     
     // Password-ஐயும் சேர்த்து எடுக்கும்படி .select('+password') சேர்க்கிறோம்
     let user = await User.findOne({ email }).select('+password');
-    if (!user) {
+    // User not found or user exists but has no password (e.g., OAuth user)
+    if (!user || !user.password) {
       console.log('User not found:', email);
       return res.status(400).json({ message: 'Invalid Credentials' });
     }
@@ -52,15 +63,14 @@ exports.login = async (req, res) => {
 
     console.log('Login successful for:', email);
     const payload = { user: { id: user.id } };
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '365d' }, (err, token) => {
-      if (err) throw err;
-      // டோக்கனுடன் பயனர் தகவலையும் அனுப்புகிறோம்
-      const userResponse = {
-        _id: user._id, username: user.username, email: user.email, role: user.role, 
-        likedSongs: user.likedSongs, photoGallery: user.photoGallery, profileImage: user.profileImage
-      };
-      res.json({ token, user: userResponse, message: 'Login Accepted' });
-    });
+    const token = await jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '365d' });
+
+    // டோக்கனுடன் பயனர் தகவலையும் அனுப்புகிறோம்
+    const userResponse = {
+      _id: user._id, username: user.username, email: user.email, role: user.role,
+      likedSongs: user.likedSongs, photoGallery: user.photoGallery, profileImage: user.profileImage
+    };
+    res.json({ token, user: userResponse, message: 'Login Accepted' });
   } catch (err) {
     console.error('Login error:', err.message);
     res.status(500).send('Server Error');

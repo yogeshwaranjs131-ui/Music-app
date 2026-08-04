@@ -14,15 +14,15 @@ router.post('/login', authController.login);
 router.get('/user', authMiddleware, authController.getUser);
 
 // Upload Profile Image (Protected)
-router.post('/upload-profile', authMiddleware, upload.single('profileImage'), authController.uploadProfile);
+router.post('/profile/upload', authMiddleware, upload.single('profileImage'), authController.uploadProfile);
 
 // Upload Gallery Photo (Protected)
-router.post('/upload-gallery-photo', authMiddleware, upload.single('galleryPhoto'), authController.uploadGallery);
+router.post('/gallery/upload', authMiddleware, upload.single('galleryPhoto'), authController.uploadGallery);
 
 // Toggle Favorite Song (Protected)
 router.put('/favorites/:id', authMiddleware, authController.toggleFavorite);
 
 // Delete Photo from Gallery (Protected)
-router.delete('/delete-gallery', authMiddleware, authController.deleteGallery);
+router.delete('/gallery/delete', authMiddleware, authController.deleteGallery);
 
 module.exports = router;

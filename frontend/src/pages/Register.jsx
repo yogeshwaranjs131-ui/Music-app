@@ -26,7 +26,7 @@ const Register = () => {
 
     try {
       // பதிவு செய்வதற்கான API அழைப்பு. இது டோக்கன் மற்றும் பயனர் தகவலைத் தரும்.
-      const response = await api.post('/api/auth/register', formData);
+      const response = await api.post('/auth/register', formData);
 
       // AuthContext-ஐ நேரடியாகப் புதுப்பிக்கிறோம். இரண்டாவது login அழைப்பு தேவையில்லை.
       setAuthData(response.data.token, response.data.user); // response.data.user is now available
