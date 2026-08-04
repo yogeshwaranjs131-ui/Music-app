@@ -43,8 +43,8 @@ app.get('/', (req, res) => {
   res.send('Music Streaming API is running...');
 });
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/music-app')
+// Database Connection (Updated MONGODB_URI to MONGO_URI)
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/music-app')
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => {
