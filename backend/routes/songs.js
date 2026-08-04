@@ -22,7 +22,7 @@ router.post('/', auth, upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'c
       singer,
       movie,
       songUrl: `uploads/${audioFile.filename}`,
-      imageUrl: imageFile ? `uploads/${imageFile.filename}` : 'uploads/default-cover.png',
+      imageUrl: imageFile ? `uploads/${imageFile.filename}` : 'https://via.placeholder.com/300x300?text=Cover',
     });
 
     await newSong.save();

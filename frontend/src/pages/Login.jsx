@@ -33,7 +33,7 @@ const Login = () => {
         setError('Login failed: No token received from server');
       }
     } catch (err) {
-      console.error("Login error:", err);
+      console.error("Login error:", err.response?.status, err.response?.data || err.message);
       setError(err.response?.data?.message || err.message || 'Login failed. Check console for details.');
     } finally {
       setLoading(false);

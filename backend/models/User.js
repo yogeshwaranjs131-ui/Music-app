@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
   },
   profileImage: { // Profile படத்திற்கான பீல்டு
     type: String,
-    default: 'uploads/default-profile.png' // Default படம்
+    default: 'https://via.placeholder.com/150?text=Profile' // Default profile image placeholder
   },
   photoGallery: { // Gallery படங்களுக்கான பீல்டு
     type: [String],
